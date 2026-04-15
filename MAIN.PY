@@ -175,10 +175,13 @@ for col in ["Qualification", "Age","Gender"]:
         print("using colums:", valid_cols)
         y = df[valid_cols]
 
+
 # svm model trained for multiclass output
 
 svm_model = MultiOutputClassifier(SVC(kernel='linear'))
 svm_model.fit(X_train, y_train[valid_cols])
 
 
-
+#Calculated SVM model accuracy using test dataset
+X_test_dense = X_test.toarray()
+print("SVM Accuracy:", svm_model.score(X_test_dense, y_test[valid_cols]))
