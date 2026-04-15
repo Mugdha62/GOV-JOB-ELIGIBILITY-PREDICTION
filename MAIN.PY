@@ -1,5 +1,5 @@
 #Extraction Layer: Uses BeautifulSoup to parse paginated HTML data .
-#Instructor guided me with the code and logic for web scraping from www.maharashtrasarkarinaukri.com
+#Instructor guided me with the logic for web scraping from www.maharashtrasarkarinaukri.com
 
 import requests
 from bs4 import BeautifulSoup
@@ -33,6 +33,10 @@ for page in range(1,101):
     time.sleep(0.2)
 
 
+# Created DataFrame from collected job data and removed duplicates
+
+df = pd.DataFrame(all_jobs).drop_duplicates()
+print("Total jobs collected:", len(df))
 
 
 
