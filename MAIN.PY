@@ -207,7 +207,7 @@ for i, col in enumerate(y.columns):
     
 #Testing Strategy
 #Unit Testing: Specific transformation functions, such as extract_age and extract_labels, are tested against various inputs—including edge cases like "No age limit"—to verify accuracy.
-#**(took help from  gemini for tests eroor solving)**
+#**(took help from  gemini for tests eroor solving)** and w3 school for understanding and syntax
 # https://gemini.google.com/share/ef4d1e80ae11 
 
 import unittest
@@ -227,3 +227,54 @@ class TestJobPipeline(unittest.TestCase):
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJobPipeline)
 unittest.TextTestRunner().run(suite)
+
+#"Added model saving and Gradio prediction interface"
+#https://gemini.google.com/share/ef4d1e80ae11
+
+import pickle
+import gradio as gr
+
+
+with open("svm_model.pkl", "wb") as f:
+    pickle.dump(svm_model, f)
+with open("vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
+
+svm_model_loaded = pickle.load(open("svm_model.pkl", "rb"))
+vectorizer_loaded = pickle.load(open("vectorizer.pkl", "rb"))
+
+def predict_job(text):
+    text = str(text)
+
+    text = text.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
+
+    vec = vectorizer_loaded.transform([text])
+    pred = svm_model_loaded.predict(vec)
+
+    qualification = pred[0][0]
+    age = "Not Specified" # Default value
+    gender = "General" # Default value
+
+
+    if len(pred[0]) > 1:
+        age = pred[0][1]
+    if len(pred[0]) > 2:
+        gender = pred[0][2]
+
+    return f"""
+### Prediction Result
+
+-  Qualification: {qualification}
+-  Age: {age}
+-  Gender: {gender}
+"""
+
+interface = gr.Interface(
+    fn=predict_job,
+    inputs=gr.Textbox(lines=6, label="Enter Job Title"),
+    outputs=gr.Markdown(),
+    title="GovHire AI - Job Eligibility Predictor",
+    theme="soft"
+)
+
+interface.launch(share=True)
