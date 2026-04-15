@@ -164,3 +164,17 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
     X_vec, y, test_size=0.2, random_state=42
 )
+
+
+# Selected useful columns for prediction machine learning
+# https://gemini.google.com/share/81ef49a3dbe8
+valid_cols = []
+for col in ["Qualification", "Age","Gender"]:
+    if df[col].nunique() > 1:
+        valid_cols.append(col)
+        print("using colums:", valid_cols)
+        y = df[valid_cols]
+
+
+
+
