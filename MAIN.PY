@@ -1,4 +1,5 @@
 #Extraction Layer: Uses BeautifulSoup to parse paginated HTML data .
+
 #Instructor guided me with the logic for web scraping from www.maharashtrasarkarinaukri.com
 
 import requests
@@ -39,12 +40,39 @@ df = pd.DataFrame(all_jobs).drop_duplicates()
 print("Total jobs collected:", len(df))
 
 
+#Database Choice (MongoDB Atlas)(**TOOK HELP FROM GEMINI TO CONNECT MONGODB ATLAS AND SOLVE EROORS **)
 
+# https://gemini.google.com/share/ef4d1e80ae11
 
+# The system uses MongoDB Atlas, a cloud-based NoSQL database, to store and manage job listings efficiently.
 
+# Loading Process The pipeline converts the scraped data into a dictionary format and performs a full refresh of the collection to ensure data accuracy.
 
+import pymongo
+import pandas as pd
 
+DB_USER = "dbUSER"
+DB_PASSWORD = "TEs96WeyXwsYlzoW"
 
+CONNECTION_STRING = f"mongodb+srv://{DB_USER}:{DB_PASSWORD}@cluster0.1oirk6b.mongodb.net/?retryWrites=true&w=majority"
 
+try:
+    client = pymongo.MongoClient(CONNECTION_STRING)
+    db = client['GovHireDB']
+    collection = db['JobsCollection']
 
+    if 'df' in locals() or 'df' in globals():
+        job_data = df.to_dict('records')
+        collection.delete_many({})
+        collection.insert_many(job_data)
+        print(f"Successfully loaded {len(job_data)} jobs to MongoDB Atlas.")
+    else:
+        print("Error: DataFrame 'df' is not defined.")
 
+except Exception as e:
+    
+    print(f"An error occurred while connecting to MongoDB: {e}")
+
+finally:
+  
+    client.close()
