@@ -40,9 +40,11 @@ df = pd.DataFrame(all_jobs).drop_duplicates()
 print("Total jobs collected:", len(df))
 
 
-#Database Choice (MongoDB Atlas)(**TOOK HELP FROM GEMINI TO CONNECT MONGODB ATLAS AND SOLVE EROORS **)
+# Database Choice (MongoDB Atlas)(**TOOK HELP FROM GEMINI TO CONNECT MONGODB ATLAS AND SOLVE EROORS **)
 
 # https://gemini.google.com/share/ef4d1e80ae11
+
+# used gemini to solve error in code # https://gemini.google.com/share/3e62c3391fce
 
 # The system uses MongoDB Atlas, a cloud-based NoSQL database, to store and manage job listings efficiently.
 
@@ -76,3 +78,17 @@ except Exception as e:
 finally:
   
     client.close()
+    
+    
+    #"Imported libraries including pandas, sklearn, seaborn, matplotlib, and gradio for ML model development and analysis"
+    
+import pandas as pd
+import re
+import gradio as gr
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.multioutput import MultiOutputClassifier
