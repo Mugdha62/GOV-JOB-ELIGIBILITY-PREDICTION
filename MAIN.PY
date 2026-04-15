@@ -140,10 +140,11 @@ df[['Gender','Age','Qualification']] = df['title'].apply(extract_labels)
 df = df[df['Qualification'] != 'Other'].copy()
 
 
+
 #Feature Extraction: TF-IDF Vectorization
 #Feature Extraction: Data is vectorized using TF-IDF to convert text into numerical format for the SVM classification model.
 #took help from scikit learn documentation for understanding and implementing concept
-# https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
+# link: https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 
 X = df["title"]
 y = df[["Qualification", "Age", "Gender"]]
@@ -156,3 +157,10 @@ vectorizer = TfidfVectorizer(
 )
 X_vec = vectorizer.fit_transform(X)
 
+# Split dataset into training and testing sets using train_test_split
+# used gemini   link : https://gemini.google.com/share/b1b20c9758f4
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_vec, y, test_size=0.2, random_state=42
+)
