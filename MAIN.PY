@@ -175,6 +175,10 @@ for col in ["Qualification", "Age","Gender"]:
         print("using colums:", valid_cols)
         y = df[valid_cols]
 
+# svm model trained for multiclass output
+
+svm_model = MultiOutputClassifier(SVC(kernel='linear'))
+svm_model.fit(X_train, y_train[valid_cols])
 
 
 
