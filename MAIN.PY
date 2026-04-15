@@ -93,7 +93,6 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.multioutput import MultiOutputClassifier
 
-
 #Data Transformations and Feature Engineering.(took help from gemini to create functions and logic to translate and solve errors marathi to english AND PASTED marathi words which i could not type)
 
 # https://gemini.google.com/share/ef4d1e80ae11
@@ -108,34 +107,52 @@ from sklearn.multioutput import MultiOutputClassifier
 
 def extract_age(text):
     text = str(text)
-    # Convert Marathi numbers to English
+    # // Convert Marathi numbers to English
     text = text.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
 
-    # Check for range patterns (e.g., 18 to 38)
+    # //Check for range patterns (e.g., 18 to 38)
     match = re.search(r'(\d{2})\s*(?:ते|to|-)\s*(\d{2})', text, re.I)
     if match:
         return f"{match.group(1)}-{match.group(2)}"
 
-    # Check for "between" pattern
+    # // Check for "between" pattern
     match = re.search(r'between\s*(\d{2})\s*(\d{2})', text, re.I)
     if match:
         return f"{match.group(1)}-{match.group(2)}"
 
-    # Fallback if no match is found (This fixes the test failure!)
+    # //Fallback if no match is found 
     return "Not Specified"
 
 def extract_labels(text):
-  gender = 'General'
-  if re.search(r'महिला|स्त्री|female', text, re.I): gender = 'Female'
-  elif re.search(r'पुरुष|male', text, re.I): gender = 'Male'
+    gender = 'General'
+    if re.search(r'महिला|स्त्री|female', text, re.I): gender = 'Female'
+    elif re.search(r'पुरुष|male', text, re.I): gender = 'Male'
 
-  age = extract_age(text)
+    age = extract_age(text)
 
-  qual = 'Other'
-  if re.search(r'पदव्युत्तर|M.A.|M.Sc.|MBA|Post Graduate', text, re.I): qual = 'Post Graduate'
-  elif re.search(r'पदवी|Graduate|B.A.|B.Sc.|B.E.|Degree', text, re.I): qual = 'Graduate'
-  elif re.search(r'डिप्लोमा|Diploma|ITI', text, re.I): qual = 'Diploma/ITI'
-  elif re.search(r'१० वी|10th|SSC' , text, re.I): qual = '10th'
-  return pd.Series([gender, age, qual])
+    qual = 'Other'
+    if re.search(r'पदव्युत्तर|M.A.|M.Sc.|MBA|Post Graduate', text, re.I): qual = 'Post Graduate'
+    elif re.search(r'पदवी|Graduate|B.A.|B.Sc.|B.E.|Degree', text, re.I): qual = 'Graduate'
+    elif re.search(r'डिप्लोमा|Diploma|ITI', text, re.I): qual = 'Diploma/ITI'
+    elif re.search(r'१० वी|10th|SSC' , text, re.I): qual = '10th'
+    return pd.Series([gender, age, qual])
 df[['Gender','Age','Qualification']] = df['title'].apply(extract_labels)
 df = df[df['Qualification'] != 'Other'].copy()
+
+
+#Feature Extraction: TF-IDF Vectorization
+#Feature Extraction: Data is vectorized using TF-IDF to convert text into numerical format for the SVM classification model.
+#took help from scikit learn documentation for understanding and implementing concept
+# https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
+
+X = df["title"]
+y = df[["Qualification", "Age", "Gender"]]
+df = df[df["Gender"] !="Unknown"]
+from sklearn.feature_extraction.text import TfidfVectorizer
+vectorizer = TfidfVectorizer(
+    max_features=10000,
+    ngram_range=(1,2),
+    lowercase=False
+)
+X_vec = vectorizer.fit_transform(X)
+
