@@ -185,3 +185,22 @@ svm_model.fit(X_train, y_train[valid_cols])
 #Calculated SVM model accuracy using test dataset
 X_test_dense = X_test.toarray()
 print("SVM Accuracy:", svm_model.score(X_test_dense, y_test[valid_cols]))
+
+# Added performance evaluation metrics including accuracy, precision, recall, and F1-score for SVM model
+# https://gemini.google.com/share/ea470267b844
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+svm_pred = svm_model.predict(X_test_dense)
+for i, col in enumerate(y.columns):
+    if y_test[col].nunique() > 1:
+        print(f"\n>>> Performance Metrics for: {col}")
+
+    acc = accuracy_score(y_test[col], svm_pred[:, i])
+    prec = precision_score(y_test[col], svm_pred[:, i], average='weighted', zero_division=0)
+    rec = recall_score(y_test[col], svm_pred[:, i], average='weighted', zero_division=0)
+    f1_val = f1_score(y_test[col], svm_pred[:, i], average='weighted', zero_division=0)
+
+    print(f"SVM Accuracy: {acc: .4f}")
+    print(f"SVM Precision: {prec: .4f}")
+    print(f"SVM Recall: {rec:.4f}")
+    print(f"SVM F1 Score: {f1_val:.4f}")
