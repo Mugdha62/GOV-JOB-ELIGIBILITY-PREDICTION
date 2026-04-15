@@ -204,3 +204,26 @@ for i, col in enumerate(y.columns):
     print(f"SVM Precision: {prec: .4f}")
     print(f"SVM Recall: {rec:.4f}")
     print(f"SVM F1 Score: {f1_val:.4f}")
+    
+#Testing Strategy
+#Unit Testing: Specific transformation functions, such as extract_age and extract_labels, are tested against various inputs—including edge cases like "No age limit"—to verify accuracy.
+#**(took help from  gemini for tests eroor solving)**
+# https://gemini.google.com/share/ef4d1e80ae11 
+
+import unittest
+
+class TestJobPipeline(unittest.TestCase):
+    def test_extract_age(self):
+        # Test Marathi to English conversion and range extraction
+        self.assertEqual(extract_age("वय १८ ते ३८ वर्षे"), "18-38")
+        # Test "Not Specified" case
+        self.assertEqual(extract_age("No age limit"), "Not Specified")
+
+    def test_extract_labels_qualification(self):
+        # Test if Graduate is correctly identified from Marathi text
+        result = extract_labels("पदवीधर पदांसाठी भरती") # पदवी = Graduate
+        self.assertEqual(result[2], 'Graduate')
+
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestJobPipeline)
+unittest.TextTestRunner().run(suite)
